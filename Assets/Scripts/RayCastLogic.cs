@@ -6,7 +6,10 @@ using UnityEngine;
 public class RayCastLogic : MonoBehaviour
 {
     // Start is called before the first frame update
-    NavMeshAgent agent;
+    private NavMeshAgent agent;
+    [SerializeField]
+    private GameObject clickSphere;
+    private float clickSize;
     void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
@@ -19,6 +22,11 @@ public class RayCastLogic : MonoBehaviour
         {
             RayCastCameraToMouse();
         }
+        if(clickSize>0.0f)
+        {
+            clickSize -= Time.deltaTime;
+            clickSphere.transform.localScale = clickSize * Vector3.one;
+        }
     }
     void RayCastCameraToMouse()
     {
@@ -26,8 +34,14 @@ public class RayCastLogic : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if(Physics.Raycast(ray,out hit,100.0f))
         {
-            Debug.Log("Ray hit");
             agent.SetDestination(hit.point);
+            DisplayClick(hit.point);
         }
+    }
+    void DisplayClick(Vector3 hitPos)
+    {
+        clickSize = 1.0f;
+        clickSphere.transform.localScale = Vector3.one;
+        clickSphere.transform.position = hitPos;
     }
 }
